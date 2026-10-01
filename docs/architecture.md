@@ -2,7 +2,7 @@
 
 The Next.js frontend authenticates users with Firebase Authentication and sends Firebase ID tokens to FastAPI. FastAPI verifies tokens, enforces role permissions, and persists application data through SQLAlchemy. Set `DATABASE_URL` to a Supabase PostgreSQL connection string to use Supabase as the application database; SQLite remains available for local development.
 
-Firebase stores identities. The relational database stores application profiles, content jobs, context packs, drafts, reviews, audit events, and metrics data. New Firebase accounts receive the `writer` role. Client supplied roles are ignored; elevated roles must be granted through a trusted administrative process.
+Firebase stores identities. The relational database stores application profiles, content jobs, context packs, drafts, reviews, audit events, and metrics data. New Firebase accounts receive the `writer` role. Profile updates reject client-supplied role fields; elevated roles must be granted through the admin-only role endpoint or trusted initial database setup.
 
 The governed workflow separates context preparation, drafting, technical review, tone refinement, publishing preparation, human review, and Markdown export.
 

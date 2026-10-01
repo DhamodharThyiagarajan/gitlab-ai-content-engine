@@ -1,0 +1,23 @@
+{
+  "title": "Draft",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "heading": { "type": "string" },
+          "content": { "type": "string" }
+        },
+        "required": ["heading", "content"]
+      }
+    },
+    "source_refs": { "type": "array", "items": { "type": "string" } },
+    "risk_flags": { "type": "array", "items": { "type": "string" } },
+    "reviewer_notes": { "type": "string" }
+  },
+  "required": ["title", "summary", "sections"]
+}

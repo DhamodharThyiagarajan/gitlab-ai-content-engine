@@ -4,6 +4,7 @@ from io import BytesIO
 from pathlib import Path
 import csv
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError, PdfStreamError
 from docx import Document
 
 @dataclass
@@ -20,7 +21,11 @@ def _clean(text: str) -> str:
 def extract_document(filename: str, data: bytes) -> ExtractedDocument:
     suffix = Path(filename).suffix.lower()
     if suffix == ".pdf":
-        reader = PdfReader(BytesIO(data)); chunks=[]; refs=[]
+        try:
+            reader = PdfReader(BytesIO(data))
+        except (PdfReadError, PdfStreamError) as exc:
+            raise ValueError("The PDF is invalid or cannot be read.") from exc
+        chunks=[]; refs=[]
         for n,page in enumerate(reader.pages,1):
             text=_clean(page.extract_text() or "")
             if text:

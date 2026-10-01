@@ -1,0 +1,17 @@
+{
+  "title": "ContentJob",
+  "type": "object",
+  "properties": {
+    "id": { "type": "integer" },
+    "title": { "type": "string" },
+    "content_type": { "type": "string" },
+    "audience": { "type": "string" },
+    "product_area": { "type": "string" },
+    "channel": { "type": "string" },
+    "status": { "type": "string" },
+    "owner": { "type": "string" },
+    "source_refs": { "type": "array", "items": { "type": "string" } },
+    "quality_score": { "type": "number" }
+  },
+  "required": ["title", "content_type", "audience", "channel"]
+}

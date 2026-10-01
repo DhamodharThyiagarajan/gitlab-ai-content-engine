@@ -10,14 +10,13 @@ const roleOptions = ["writer", "reviewer", "approver", "admin"];
 const permissionMatrix = {
   writer: { refine: true, requestRevision: false, approve: false, publish: false },
   reviewer: { refine: true, requestRevision: true, approve: true, publish: false },
-  approver: { refine: true, requestRevision: true, approve: true, publish: true },
+  approver: { refine: false, requestRevision: true, approve: true, publish: true },
   admin: { refine: true, requestRevision: true, approve: true, publish: true },
 };
 
 export default function SettingsPage() {
   const { user, userProfile, refreshProfile } = useAuth();
   const [displayName, setDisplayName] = useState("");
-  const [selectedRole, setSelectedRole] = useState("writer");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -28,7 +27,6 @@ export default function SettingsPage() {
     }
 
     setDisplayName(userProfile.displayName || "");
-    setSelectedRole((userProfile.role || "writer").toLowerCase());
   }, [userProfile]);
 
   async function handleSave() {
@@ -43,18 +41,18 @@ export default function SettingsPage() {
     try {
       await updateUserProfile(user.uid, {
         displayName,
-        role: selectedRole,
       });
       await refreshProfile();
-      setMessage("Role updated successfully.");
+      setMessage("Profile updated successfully.");
     } catch (err) {
-      setError(err?.message || "Failed to save role.");
+      setError(err?.message || "Failed to save profile.");
     } finally {
       setSaving(false);
     }
   }
 
   const email = userProfile?.email || user?.email || "";
+  const selectedRole = (userProfile?.role || "writer").toLowerCase();
   const currentRoleLabel = ({ writer: "Writer", reviewer: "Reviewer", approver: "Approver", admin: "Admin" })[selectedRole] || "Writer";
   const initial = (displayName || email || "U").charAt(0).toUpperCase();
 
@@ -107,21 +105,13 @@ export default function SettingsPage() {
                   />
                 </label>
 
-                <label className="block text-sm font-medium text-slate-300 md:col-span-2">
+                <div className="text-sm font-medium text-slate-300 md:col-span-2">
                   <span className="mb-2 block">Application Role</span>
-                  <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="h-12 w-full rounded-xl border border-[#374151] bg-[#111827] px-3 text-base text-slate-100 outline-none focus:border-[#f97316]"
-                  >
-                    {roleOptions.map((roleOption) => (
-                      <option key={roleOption} value={roleOption}>
-                        {({ writer: "Writer", reviewer: "Reviewer", approver: "Approver", admin: "Admin" })[roleOption]}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="mt-2 block text-xs text-slate-500">Update your access level and permissions.</span>
-                </label>
+                  <div className="flex h-12 items-center rounded-xl border border-[#374151] bg-[#111827] px-3 text-base text-slate-100">
+                    {currentRoleLabel}
+                  </div>
+                  <span className="mt-2 block text-xs text-slate-500">Role changes are managed by an administrator.</span>
+                </div>
               </div>
 
               <div className="mt-8 rounded-[18px] border border-[#2d3748] bg-[#0b1220] p-4">
@@ -199,7 +189,7 @@ export default function SettingsPage() {
                   disabled={saving}
                   className="mt-2 w-full rounded-xl bg-[#f97316] px-4 py-3 text-base font-semibold text-white shadow-[0_10px_18px_rgba(249,115,22,0.24)] transition hover:bg-[#ea580c] disabled:opacity-60"
                 >
-                  {saving ? "Saving..." : "Save Role"}
+                  {saving ? "Saving..." : "Save Profile"}
                 </button>
               </div>
             </section>

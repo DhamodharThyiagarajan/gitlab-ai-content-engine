@@ -1,0 +1,13 @@
+**/.git
+**/.venv
+**/node_modules
+**/.next
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.env
+.env.local
+.gitignore
+npm-debug.log
+.DS_Store
