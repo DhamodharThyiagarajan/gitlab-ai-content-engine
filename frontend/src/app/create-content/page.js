@@ -38,6 +38,7 @@ export default function CreateContentPage() {
   const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState("Templates");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [rawText, setRawText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [job, setJob] = useState(null);
   const [error, setError] = useState("");
@@ -53,6 +54,8 @@ export default function CreateContentPage() {
     product_area: "General",
     channel: "Documentation",
   });
+
+  const hasSelectedFile = Boolean(selectedFile);
 
   const progressPercent = useMemo(() => {
     if (!job) return 10;
@@ -70,6 +73,14 @@ export default function CreateContentPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleFileSelection = (event) => {
+    const file = event.target.files?.[0] ?? null;
+    setSelectedFile(file);
+    if (file) {
+      updateStatus(["Document uploaded successfully", "Ready to process source input"]);
+    }
+  };
+
   const updateStatus = (messages) => setStatusLog(messages);
 
   const handleSubmit = async () => {
@@ -78,8 +89,8 @@ export default function CreateContentPage() {
       return;
     }
 
-    if (!selectedFile) {
-      setError("Please upload a document to process.");
+    if (!selectedFile && !rawText.trim()) {
+      setError("Please upload a document or paste raw text to process.");
       return;
     }
 
@@ -91,38 +102,74 @@ export default function CreateContentPage() {
     setError("");
     setIsSubmitting(true);
     setJob(null);
-    updateStatus(["Uploading document...", "Validating file and content type..."]);
+    updateStatus([
+      selectedFile ? "Uploading document..." : "Submitting raw text...",
+      "Validating source content and metadata...",
+    ]);
 
     try {
       const token = await user.getIdToken();
-      const uploadForm = new FormData();
-      uploadForm.append("title", form.title);
-      uploadForm.append("content_type", form.content_type);
-      uploadForm.append("audience", form.audience);
-      uploadForm.append("product_area", form.product_area);
-      uploadForm.append("channel", form.channel);
-      uploadForm.append("file", selectedFile);
+      let jobPayload;
 
-      const uploadResponse = await fetch(`${BACKEND_URL}/api/content-jobs/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: uploadForm,
-      });
+      if (selectedFile) {
+        const uploadForm = new FormData();
+        uploadForm.append("title", form.title);
+        uploadForm.append("content_type", form.content_type);
+        uploadForm.append("audience", form.audience);
+        uploadForm.append("product_area", form.product_area);
+        uploadForm.append("channel", form.channel);
+        uploadForm.append("file", selectedFile);
 
-      const uploadData = await uploadResponse.json().catch(() => ({}));
+        const uploadResponse = await fetch(`${BACKEND_URL}/api/content-jobs/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: uploadForm,
+        });
 
-      if (!uploadResponse.ok) {
-        throw new Error(uploadData.detail || "Document upload failed.");
+        const uploadData = await uploadResponse.json().catch(() => ({}));
+
+        if (!uploadResponse.ok) {
+          throw new Error(uploadData.detail || "Document upload failed.");
+        }
+
+        jobPayload = uploadData;
+        updateStatus([
+          "Document uploaded successfully",
+          "Extracting source text and metadata...",
+          "Preparing context package...",
+        ]);
+      } else {
+        const createResponse = await fetch(`${BACKEND_URL}/api/content-jobs`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: form.title,
+            content_type: form.content_type,
+            audience: form.audience,
+            product_area: form.product_area,
+            channel: form.channel,
+            source_text: rawText.trim(),
+          }),
+        });
+
+        const createData = await createResponse.json().catch(() => ({}));
+
+        if (!createResponse.ok) {
+          throw new Error(createData.detail || "Raw text submission failed.");
+        }
+
+        jobPayload = createData;
+        updateStatus([
+          "Raw text submitted successfully",
+          "Extracting source context...",
+          "Preparing context package...",
+        ]);
       }
 
-      setJob(uploadData);
-      updateStatus([
-        "Document uploaded successfully",
-        "Extracting source text and metadata...",
-        "Preparing context package...",
-      ]);
-
-      const runResponse = await fetch(`${BACKEND_URL}/api/content-jobs/${uploadData.id}/run`, {
+      const runResponse = await fetch(`${BACKEND_URL}/api/content-jobs/${jobPayload.id}/run`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -136,14 +183,14 @@ export default function CreateContentPage() {
       setJob(runData);
 
       updateStatus([
-        "Document uploaded successfully",
+        selectedFile ? "Document uploaded successfully" : "Raw text submitted successfully",
         "Source context extracted",
         "AI workflow completed",
         "Draft generated. Navigate to the Review panel to review it.",
       ]);
     } catch (err) {
-      setError(err.message || "Something went wrong while processing the document.");
-      updateStatus(["Upload failed", "Please review the file and try again."]);
+      setError(err.message || "Something went wrong while processing the source.");
+      updateStatus([selectedFile ? "Upload failed" : "Processing failed", "Please review the input and try again."]);
     } finally {
       setIsSubmitting(false);
     }
@@ -189,20 +236,41 @@ export default function CreateContentPage() {
                 <div className="text-xs text-slate-400">{selectedFile ? selectedFile.name : "No file selected"}</div>
               </div>
 
-              <label className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-[#475569] bg-[#111827] px-6 py-10 text-center transition hover:border-[#f97316] hover:bg-[#141d2d]">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1e293b] text-[#f8fafc]">
-                  <FiUploadCloud className="h-6 w-6" />
+              <label
+                className={`mt-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-10 text-center transition ${
+                  hasSelectedFile
+                    ? "border-emerald-500/80 bg-emerald-500/10 hover:border-emerald-400 hover:bg-emerald-500/15"
+                    : "border-[#475569] bg-[#111827] hover:border-[#f97316] hover:bg-[#141d2d]"
+                }`}
+              >
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-full ${
+                    hasSelectedFile ? "bg-emerald-500/20 text-emerald-300" : "bg-[#1e293b] text-[#f8fafc]"
+                  }`}
+                >
+                  {hasSelectedFile ? <FiCheckCircle className="h-6 w-6" /> : <FiUploadCloud className="h-6 w-6" />}
                 </div>
-                <div className="mt-4 text-base font-medium text-slate-200">Upload source document</div>
-                <div className="mt-1 text-sm text-slate-400">PDF, DOCX, TXT, MD, or CSV</div>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-                />
+                <div className={`mt-4 text-base font-medium ${hasSelectedFile ? "text-emerald-200" : "text-slate-200"}`}>
+                  {hasSelectedFile ? "Document uploaded" : "Upload source document"}
+                </div>
+                <div className={`mt-1 text-sm ${hasSelectedFile ? "text-emerald-300" : "text-slate-400"}`}>
+                  {hasSelectedFile ? selectedFile.name : "PDF, DOCX, TXT, MD, or CSV"}
+                </div>
+                <input type="file" className="hidden" onChange={handleFileSelection} />
               </label>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <label className="block text-sm text-slate-300 sm:col-span-2">
+                  <span className="mb-1 block">Raw text source</span>
+                  <textarea
+                    value={rawText}
+                    onChange={(event) => setRawText(event.target.value)}
+                    rows={5}
+                    className="w-full rounded-xl border border-[#374151] bg-[#111827] px-3 py-2.5 text-slate-100 outline-none placeholder:text-slate-500 focus:border-[#f97316]"
+                    placeholder="Paste release notes, product context, or any raw text here. This can be processed even without uploading a file."
+                  />
+                </label>
+
                 <label className="block text-sm text-slate-300">
                   <span className="mb-1 block">Title</span>
                   <input
@@ -287,7 +355,7 @@ export default function CreateContentPage() {
                   ) : (
                     <>
                       <FiZap className="h-4 w-4" />
-                      Process Document
+                      {selectedFile ? "Process Document" : rawText.trim() ? "Process Raw Text" : "Process Source"}
                     </>
                   )}
                 </button>
