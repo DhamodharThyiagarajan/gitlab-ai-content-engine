@@ -1,84 +1,186 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
+import { useAuth } from "@/hooks/useAuth";
 
-const reviews = [
-  { title: "Release Notes v16.4", type: "Release Notes", author: "Dhamo", submitted: "4 hours ago", priority: "High" },
-  { title: "API Reference Draft", type: "API Docs", author: "Dhamo", submitted: "6 hours ago", priority: "Medium" },
-  { title: "User Onboarding Guide", type: "Guide", author: "Dhamo", submitted: "1 day ago", priority: "Low" },
-  { title: "Architecture Overview", type: "Documentation", author: "Dhamo", submitted: "2 days ago", priority: "Medium" },
-];
+const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
 
-function PriorityBadge({ priority }) {
-  const palette = {
-    High: "bg-[#fff0e6] text-[#d97932]",
-    Medium: "bg-[#eef3ff] text-[#4b6ed9]",
-    Low: "bg-[#eafaf0] text-[#2c9d68]",
-  };
-
-  return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${palette[priority] || "bg-[#edf2f7] text-[#49505a]"}`}>
-      {priority}
-    </span>
-  );
+function ReviewList({ title, items, empty }) {
+  const displayItem = (item) => typeof item === "string" ? item : [item.fact || item.claim || item.text || "", ...(item.source_refs || []).map((source) => `Source: ${source}`)].filter(Boolean).join(" · ");
+  return <section>
+    {title && <h3 className="text-sm font-semibold text-slate-200">{title}</h3>}
+    {items.length ? <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-400">{items.map((item, index) => <li key={`${index}-${displayItem(item)}`} className="flex gap-2"><span className="text-orange-300">•</span><span>{displayItem(item)}</span></li>)}</ul> : <p className="mt-2 text-sm text-slate-500">{empty}</p>}
+  </section>;
 }
 
 export default function ReviewPage() {
-  return (
-    <AppLayout initialSelectedNav="Review">
-      <div className="px-3 py-4 sm:px-4 md:px-5 md:py-5 xl:px-8 xl:pb-10">
-        <div className="rounded-[24px] border border-[#f0dfd2] bg-[#fffaf7] p-4 shadow-[0_2px_8px_rgba(15,23,42,0.02)] sm:p-5 lg:p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-[-0.04em] text-[#1f2328] sm:text-[2.1rem]">Review</h1>
-              <p className="mt-2 text-sm text-[#6a6f76] sm:text-[1rem]">
-                Review approved AI drafts and finalize content before publishing.
-              </p>
-            </div>
+  const { user, userProfile } = useAuth();
+  const [jobs, setJobs] = useState([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [detail, setDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [comments, setComments] = useState("");
+  const [action, setAction] = useState("");
+  const role = (userProfile?.role || "writer").toLowerCase();
+  const canApprove = ["reviewer", "approver", "admin"].includes(role);
+  const canPublish = ["approver", "admin"].includes(role);
 
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-xl bg-[#f56d2a] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_18px_rgba(245,109,42,0.22)] transition hover:bg-[#e55f1c]"
-            >
-              Review Queue
-            </button>
-          </div>
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    (async () => {
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${BACKEND_URL}/api/content-jobs`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await response.json().catch(() => []);
+        if (!response.ok) throw new Error(data.detail || "Unable to load review jobs.");
+        const reviewJobs = data.filter((job) => ["review", "revision_requested", "approved", "publish_ready", "published"].includes(job.status));
+        if (active) { setJobs(reviewJobs); setSelectedId(reviewJobs[0] ? String(reviewJobs[0].id) : ""); }
+      } catch (err) { if (active) setError(err.message || "Unable to load review jobs."); }
+      finally { if (active) setLoading(false); }
+    })();
+    return () => { active = false; };
+  }, [user]);
 
-          <div className="mt-6 grid gap-4 xl:grid-cols-2">
-            {reviews.map((review) => (
-              <div key={review.title} className="rounded-[20px] border border-[#f0dfd2] bg-white p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="text-lg font-semibold text-[#1f2328]">{review.title}</h2>
-                    <p className="mt-1 text-sm text-[#5c6470]">{review.type}</p>
-                  </div>
-                  <PriorityBadge priority={review.priority} />
-                </div>
+  useEffect(() => {
+    if (!user || !selectedId) { setDetail(null); return; }
+    let active = true;
+    setDetail(null);
+    (async () => {
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${BACKEND_URL}/api/content-jobs/${selectedId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || "Unable to load this document.");
+        if (active) setDetail(data);
+      } catch (err) { if (active) setError(err.message || "Unable to load this document."); }
+    })();
+    return () => { active = false; };
+  }, [user, selectedId]);
 
-                <div className="mt-5 flex items-center justify-between text-sm text-[#5d6875]">
-                  <span>Author: {review.author}</span>
-                  <span>{review.submitted}</span>
-                </div>
+  const draft = detail?.drafts?.at(-1);
+  const review = draft?.technical_review || detail?.technical_review || {};
+  const formatDate = (value) => value ? new Date(value).toLocaleString() : "Not available";
 
-                <div className="mt-5 flex gap-3">
-                  <button
-                    type="button"
-                    className="flex-1 rounded-xl bg-[#f56d2a] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e55f1c]"
-                  >
-                    Review
-                  </button>
-                  <button
-                    type="button"
-                    className="flex-1 rounded-xl border border-[#f0dfd2] bg-[#fffaf7] px-4 py-2.5 text-sm font-semibold text-[#2e3641] transition hover:bg-[#fff3ed]"
-                  >
-                    Request Changes
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+  const refreshSelectedJob = async (token) => {
+    const [jobResponse, listResponse] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/content-jobs/${selectedId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${BACKEND_URL}/api/content-jobs`, { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
+    const jobData = await jobResponse.json().catch(() => ({}));
+    const listData = await listResponse.json().catch(() => []);
+    if (!jobResponse.ok) throw new Error(jobData.detail || "Unable to refresh this document.");
+    if (!listResponse.ok) throw new Error(listData.detail || "Unable to refresh the review queue.");
+    setDetail(jobData);
+    setJobs(listData.filter((job) => ["review", "revision_requested", "approved", "publish_ready", "published"].includes(job.status)));
+  };
+
+  const submitReviewDecision = async (decision) => {
+    if (!user || !draft) return;
+    setAction(decision);
+    setError("");
+    setNotice("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${BACKEND_URL}/api/drafts/${draft.id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ decision, comments }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || "Unable to submit the review decision.");
+
+      if (decision === "request_revision") {
+        const refineResponse = await fetch(`${BACKEND_URL}/api/drafts/${draft.id}/refine`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ comments }),
+        });
+        const refineData = await refineResponse.json().catch(() => ({}));
+        if (!refineResponse.ok) throw new Error(refineData.detail || "Revision was requested, but refinement failed.");
+        setNotice("Revision generated and returned to the review queue.");
+        setComments("");
+      } else {
+        setNotice("Draft approved. It is ready to publish.");
+      }
+      await refreshSelectedJob(token);
+    } catch (err) {
+      setError(err.message || "Unable to complete this review action.");
+      try { await refreshSelectedJob(await user.getIdToken()); } catch { /* keep the original action error */ }
+    } finally {
+      setAction("");
+    }
+  };
+
+  const publishDraft = async () => {
+    if (!user || !draft) return;
+    setAction("publish");
+    setError("");
+    setNotice("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${BACKEND_URL}/api/publish/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ draft_id: draft.id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || "Unable to publish this document.");
+      const file = new Blob([data.content], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(file);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = data.filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setNotice(`Published successfully. ${data.filename} was downloaded.`);
+      await refreshSelectedJob(token);
+    } catch (err) {
+      setError(err.message || "Unable to publish this document.");
+    } finally {
+      setAction("");
+    }
+  };
+
+  return <AppLayout initialSelectedNav="Review">
+    <div className="px-3 py-4 sm:px-4 md:px-5 md:py-5 xl:px-8 xl:pb-10">
+      <div className="rounded-[24px] border border-[#2d3748] bg-[#111827] p-4 shadow-[0_2px_8px_rgba(2,6,23,0.35)] sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div><p className="text-xs font-medium uppercase tracking-[0.16em] text-orange-300">Documentation review</p><h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-slate-100 sm:text-[2.1rem]">Review generated document</h1><p className="mt-2 text-sm text-slate-400">Read the customer facing Markdown alongside its technical evidence.</p></div>
+          <label className="w-full sm:max-w-sm"><span className="mb-1.5 block text-xs font-medium text-slate-400">Review queue</span><select value={selectedId} onChange={(event) => setSelectedId(event.target.value)} className="w-full rounded-xl border border-[#374151] bg-[#0f172a] px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-orange-400"><option value="">Select a document</option>{jobs.map((job) => <option key={job.id} value={job.id}>{job.title} · #{job.id}</option>)}</select></label>
         </div>
+        {error && <div role="alert" className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>}
+        {notice && <div role="status" className="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{notice}</div>}
+        {loading ? <p className="py-16 text-center text-sm text-slate-400">Loading review queue…</p> : !jobs.length ? <div className="mt-6 rounded-2xl border border-dashed border-[#374151] px-6 py-14 text-center"><h2 className="font-medium text-slate-200">No documents are waiting for review</h2><p className="mt-2 text-sm text-slate-500">Generated drafts will appear here once their workflow completes.</p></div> : detail && draft ? <div className="mt-6 grid items-start gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.75fr)]">
+          <section className="min-w-0 overflow-hidden rounded-2xl border border-[#2d3748] bg-[#0f172a]">
+            <header className="border-b border-[#2d3748] px-5 py-5 sm:px-7"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-xl font-semibold text-slate-100">{detail.title}</h2><p className="mt-1 text-sm text-slate-400">{detail.content_type} · {detail.audience}</p></div><span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-200">{detail.status.replaceAll("_", " ")}</span></div><div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500"><span>Generated {formatDate(draft.generated_at || draft.created_at)}</span><span>Version {draft.version}</span><span>Channel: {detail.channel}</span></div></header>
+            <div className="px-5 py-6 sm:px-7 sm:py-8"><MarkdownRenderer content={draft.final_document || draft.content || ""} /></div>
+          </section>
+          <aside className="space-y-4">
+            <section className="rounded-2xl border border-[#2d3748] bg-[#0f172a] p-5"><div className="flex items-center justify-between gap-3"><h2 className="font-semibold text-slate-100">Technical review</h2><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${review.verdict === "PASS" ? "bg-emerald-400/10 text-emerald-300" : "bg-amber-400/10 text-amber-200"}`}>{review.verdict || "NEEDS REVIEW"}</span></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl border border-[#2d3748] bg-[#111827] p-3"><p className="text-xs text-slate-500">Quality score</p><p className="mt-1 text-2xl font-semibold text-slate-100">{review.quality_score ?? detail.quality_score ?? "—"}<span className="ml-1 text-sm font-normal text-slate-500">/100</span></p></div><div className="rounded-xl border border-[#2d3748] bg-[#111827] p-3"><p className="text-xs text-slate-500">Supported facts</p><p className="mt-1 text-2xl font-semibold text-slate-100">{review.evidence_count ?? "—"}</p></div></div></section>
+            <section className="space-y-5 rounded-2xl border border-[#2d3748] bg-[#0f172a] p-5"><ReviewList title="Supported information" items={review.supported_information || review.supported_sections || []} empty="No supported information was extracted." /><ReviewList title="Context gaps" items={review.context_gaps || review.missing_information || []} empty="No context gaps identified." /><ReviewList title="Unsupported claims" items={review.unsupported_claims || []} empty="No unsupported claims identified." /><ReviewList title="Technical risks" items={review.risks || draft.risk_flags || []} empty="No technical risks identified." /></section>
+            <section className="rounded-2xl border border-[#2d3748] bg-[#0f172a] p-5"><h3 className="text-sm font-semibold text-slate-200">Source references</h3><ReviewList title="" items={review.source_refs || draft.source_refs || []} empty="No source references recorded." /></section>
+            {['review', 'revision_requested'].includes(detail.status) && <section className="rounded-2xl border border-[#2d3748] bg-[#0f172a] p-5">
+              <label className="block text-sm font-medium text-slate-200" htmlFor="review-comments">Reviewer comments</label>
+              <textarea id="review-comments" value={comments} onChange={(event) => setComments(event.target.value)} rows={3} placeholder="Add guidance for the requested revision (optional)." className="mt-2 w-full resize-y rounded-xl border border-[#374151] bg-[#111827] px-3 py-2.5 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-orange-400" />
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <button type="button" disabled={Boolean(action)} onClick={() => submitReviewDecision("request_revision")} className="rounded-xl border border-[#374151] bg-[#111827] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-[#182335] disabled:cursor-wait disabled:opacity-60">{action === "request_revision" ? "Generating revision…" : "Request Revision"}</button>
+                {canApprove && <button type="button" disabled={Boolean(action)} onClick={() => submitReviewDecision("approve")} className="rounded-xl bg-[#f97316] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#ea580c] disabled:cursor-wait disabled:opacity-60">{action === "approve" ? "Approving…" : "Approve"}</button>}
+              </div>
+              {!canApprove && <p className="mt-3 text-xs text-slate-500">An approver must approve this draft before it can be published.</p>}
+            </section>}
+            {["approved", "publish_ready"].includes(detail.status) && canPublish && <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5"><h3 className="font-semibold text-slate-100">Ready to publish</h3><p className="mt-1 text-sm text-slate-400">Publish the approved Markdown document and download a copy.</p><button type="button" disabled={Boolean(action)} onClick={publishDraft} className="mt-4 w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-wait disabled:opacity-60">{action === "publish" ? "Publishing…" : "Publish"}</button></section>}
+            {["approved", "publish_ready"].includes(detail.status) && !canPublish && <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-200">Approved and waiting for an approver or admin to publish.</p>}
+            {detail.status === "published" && <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm font-medium text-emerald-200">Published</p>}
+          </aside>
+        </div> : jobs.length ? <p className="py-16 text-center text-sm text-slate-400">Loading document…</p> : null}
       </div>
-    </AppLayout>
-  );
+    </div>
+  </AppLayout>;
 }

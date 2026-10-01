@@ -1,36 +1,20 @@
-# dependencies
-node_modules/
-frontend/node_modules/
-backend/node_modules/
-
-# environment files
 .env
 .env.*
-.env.local
-frontend/.env.local
-backend/.env
-backend/.env.*
-
-# secrets / credentials
-backend/serviceAccountKey.json
-*.pem
-*.key
-
-# build outputs
-frontend/.next/
-out/
-dist/
-build/
-coverage/
-
-# Python backend
+**/.env
+**/.env.*
+!.env.example
 __pycache__/
-*.py[cod]
-backend/.venv/
-backend/venv/
-backend/chroma_data/
-
-# local databases / generated data
-backend/database/
-backend/*.db
-backend/*.sqlite3
+*.pyc
+.venv/
+node_modules/
+dist/
+.next/
+*.db
+*.sqlite3
+*serviceAccountKey*.json
+*firebase-adminsdk*.json
+backend/serviceAccountKey.json
+backend/.env
+exports/
+backend/exports/
+data/uploads/

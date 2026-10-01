@@ -1,12 +1,10 @@
 import Image from "next/image";
 import {
   FiBarChart2,
-  FiBookOpen,
   FiClipboard,
   FiFileText,
   FiFolder,
   FiGrid,
-  FiLayers,
   FiSettings,
 } from "react-icons/fi";
 
@@ -15,8 +13,6 @@ export const defaultNavItems = [
   { icon: FiFileText, label: "Create Content", route: "/create-content" },
   { icon: FiFolder, label: "My Jobs", route: "/my-jobs" },
   { icon: FiClipboard, label: "Review", route: "/review" },
-  { icon: FiBookOpen, label: "Knowledge Base", route: "/knowledge-base" },
-  { icon: FiLayers, label: "Templates", route: "/templates" },
   { icon: FiBarChart2, label: "Analytics", route: "/analytics" },
   { icon: FiSettings, label: "Settings", route: "/settings" },
 ];
@@ -46,8 +42,8 @@ export default function SidebarNav({
           />
 
           <div>
-            <div className="text-[1.05rem] font-bold leading-none text-[#1f2328]">GitLab AI</div>
-            <div className="mt-1 text-[0.72rem] font-medium text-[#6a707a]">
+            <div className="text-[1.05rem] font-bold leading-none text-slate-100">GitLab AI</div>
+            <div className="mt-1 text-[0.72rem] font-medium text-slate-400">
               Content &amp; Documentation Engine
             </div>
           </div>
@@ -65,8 +61,8 @@ export default function SidebarNav({
               onClick={() => handleSelect({ label, route })}
               className={`hover:cursor-pointer group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[1rem] font-medium transition-all duration-300 ease-out ${
                 isActive
-                  ? "translate-x-1 bg-[#fff0e8] text-[#d85c2a] shadow-[inset_0_0_0_1px_rgba(245,109,42,0.18)]"
-                  : "text-[#3d434d] hover:-translate-x-1 hover:bg-[#fff4ee] hover:shadow-sm"
+                  ? "translate-x-1 bg-[#1f2937] text-[#f97316] shadow-[inset_0_0_0_1px_rgba(249,115,22,0.25)]"
+                  : "text-slate-300 hover:-translate-x-1 hover:bg-[#182335] hover:text-slate-100 hover:shadow-sm"
               }`}
             >
               <Icon
@@ -87,12 +83,12 @@ export default function SidebarNav({
       </nav>
 
       {!isMobile && (
-        <div className="mt-auto rounded-[18px] bg-[#fff0e8] p-4 text-[#693a1d] shadow-[inset_0_0_0_1px_rgba(245,109,42,0.14)]">
-          <p className="text-[1.05rem] font-semibold leading-snug">“Better docs.</p>
-          <p className="text-[1.05rem] font-semibold leading-snug">Faster releases.</p>
-          <p className="mt-2 text-[1.05rem] font-semibold leading-snug">A stronger GitLab.”</p>
-          <div className="mt-4 h-px w-full bg-[#d9e4f8]" />
-          <p className="mt-3 text-[0.75rem] font-medium text-[#687387]">Build. Document. Together.</p>
+        <div className="mt-auto rounded-[18px] bg-[#111827] p-4 text-slate-200 shadow-[inset_0_0_0_1px_rgba(148,163,184,0.1)]">
+          <p className="text-[1.05rem] font-semibold leading-snug text-slate-100">“Better docs.</p>
+          <p className="text-[1.05rem] font-semibold leading-snug text-slate-100">Faster releases.</p>
+          <p className="mt-2 text-[1.05rem] font-semibold leading-snug text-slate-100">A stronger GitLab.”</p>
+          <div className="mt-4 h-px w-full bg-[#334155]" />
+          <p className="mt-3 text-[0.75rem] font-medium text-slate-400">Build. Document. Together.</p>
         </div>
       )}
     </>

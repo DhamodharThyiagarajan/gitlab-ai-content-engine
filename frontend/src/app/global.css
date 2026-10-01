@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+:root {
+  --bg-primary: #070d18;
+  --bg-secondary: #0f172a;
+  --bg-card: #111827;
+  --bg-card-alt: #1a2333;
+  --bg-soft: #182335;
+  --border: #2d3748;
+  --text-primary: #e5edf8;
+  --text-secondary: #a9b6c8;
+  --text-muted: #8ea0b7;
+  --accent: #f97316;
+  --accent-strong: #fb923c;
+  --accent-soft: rgba(249, 115, 22, 0.14);
+  --shadow: rgba(2, 6, 23, 0.45);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,13 +24,21 @@ html,
 body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
+}
+
+html {
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 body {
-  font-family: "Times New Roman", Times, serif;
+  background:
+    radial-gradient(circle at top, rgba(249, 115, 22, 0.12), transparent 34%),
+    linear-gradient(180deg, #070d18 0%, #0b1220 100%);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
 }
-
-
 
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
@@ -25,6 +49,8 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   display: none !important;
 }
 
-
-
+::selection {
+  background: rgba(249, 115, 22, 0.35);
+  color: #fff;
+}
 
