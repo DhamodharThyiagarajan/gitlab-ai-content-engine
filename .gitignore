@@ -17,4 +17,8 @@ backend/serviceAccountKey.json
 backend/.env
 exports/
 backend/exports/
-data/uploads/
+backend/data/chroma/
+backend/data/uploads/
+root/data/uploads/
+example-data/
+sample/
