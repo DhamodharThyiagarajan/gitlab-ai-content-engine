@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
-import { updateUserProfile } from "@/lib/firebase/users";
+import { listUsers, updateUserProfile, updateUserRole } from "@/lib/firebase/users";
 
 const navTabs = ["Profile", "AI Configuration", "Notifications", "Integrations", "Security"];
 const roleOptions = ["writer", "reviewer", "approver", "admin"];
@@ -17,8 +17,12 @@ const permissionMatrix = {
 export default function SettingsPage() {
   const { user, userProfile, refreshProfile } = useAuth();
   const [displayName, setDisplayName] = useState("");
+  const [profileRole, setProfileRole] = useState("writer");
+  const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedRole, setSelectedRole] = useState("writer");
   const [saving, setSaving] = useState(false);
+  const [savingRole, setSavingRole] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -28,8 +32,34 @@ export default function SettingsPage() {
     }
 
     setDisplayName(userProfile.displayName || "");
-    setSelectedRole((userProfile.role || "writer").toLowerCase());
+    setProfileRole((userProfile.role || "writer").toLowerCase());
   }, [userProfile]);
+
+  useEffect(() => {
+    if ((userProfile?.role || "").toLowerCase() !== "admin") {
+      setUsers([]);
+      return;
+    }
+
+    let cancelled = false;
+    listUsers()
+      .then((rows) => {
+        if (!cancelled) {
+          setUsers(rows);
+          setSelectedUserId((current) => current || String(userProfile.id || rows[0]?.id || ""));
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err?.message || "Failed to load users.");
+      });
+
+    return () => { cancelled = true; };
+  }, [userProfile]);
+
+  useEffect(() => {
+    const selectedUser = users.find((row) => String(row.id) === String(selectedUserId));
+    if (selectedUser) setSelectedRole((selectedUser.role || "writer").toLowerCase());
+  }, [users, selectedUserId]);
 
   async function handleSave() {
     if (!user) {
@@ -43,19 +73,38 @@ export default function SettingsPage() {
     try {
       await updateUserProfile(user.uid, {
         displayName,
-        role: selectedRole,
+        role: profileRole,
       });
       await refreshProfile();
-      setMessage("Role updated successfully.");
+      setMessage("Profile and role updated successfully.");
     } catch (err) {
-      setError(err?.message || "Failed to save role.");
+      setError(err?.message || "Failed to save profile.");
     } finally {
       setSaving(false);
     }
   }
 
+  async function handleSaveRole() {
+    if (!selectedUserId) return;
+
+    setSavingRole(true);
+    setMessage("");
+    setError("");
+    try {
+      const updatedUser = await updateUserRole(selectedUserId, selectedRole);
+      setUsers((current) => current.map((row) => row.id === updatedUser.id ? { ...row, ...updatedUser } : row));
+      if (String(updatedUser.id) === String(userProfile?.id)) await refreshProfile();
+      setMessage(`Role updated for ${updatedUser.name || updatedUser.email}.`);
+    } catch (err) {
+      setError(err?.message || "Failed to update role.");
+    } finally {
+      setSavingRole(false);
+    }
+  }
+
   const email = userProfile?.email || user?.email || "";
-  const currentRoleLabel = ({ writer: "Writer", reviewer: "Reviewer", approver: "Approver", admin: "Admin" })[selectedRole] || "Writer";
+  const currentRole = profileRole;
+  const currentRoleLabel = ({ writer: "Writer", reviewer: "Reviewer", approver: "Approver", admin: "Admin" })[currentRole] || "Writer";
   const initial = (displayName || email || "U").charAt(0).toUpperCase();
 
   return (
@@ -110,8 +159,8 @@ export default function SettingsPage() {
                 <label className="block text-sm font-medium text-slate-300 md:col-span-2">
                   <span className="mb-2 block">Application Role</span>
                   <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
+                    value={profileRole}
+                    onChange={(event) => setProfileRole(event.target.value)}
                     className="h-12 w-full rounded-xl border border-[#374151] bg-[#111827] px-3 text-base text-slate-100 outline-none focus:border-[#f97316]"
                   >
                     {roleOptions.map((roleOption) => (
@@ -120,8 +169,9 @@ export default function SettingsPage() {
                       </option>
                     ))}
                   </select>
-                  <span className="mt-2 block text-xs text-slate-500">Update your access level and permissions.</span>
+                  <span className="mt-2 block text-xs text-slate-500">Choose your application access role.</span>
                 </label>
+
               </div>
 
               <div className="mt-8 rounded-[18px] border border-[#2d3748] bg-[#0b1220] p-4">
@@ -146,7 +196,7 @@ export default function SettingsPage() {
                     <tbody>
                       {roleOptions.map((roleOption) => {
                         const currentPermissions = permissionMatrix[roleOption];
-                        const isSelected = roleOption === selectedRole;
+                        const isSelected = roleOption === currentRole;
                         return (
                           <tr
                             key={roleOption}
@@ -193,13 +243,54 @@ export default function SettingsPage() {
                   <div className="text-xl font-semibold text-slate-100">{currentRoleLabel}</div>
                 </div>
 
+                {currentRole === "admin" && (
+                  <div className="space-y-4 rounded-xl border border-[#374151] bg-[#111827] p-4">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-300" htmlFor="role-user">Change role for</label>
+                      <select
+                        id="role-user"
+                        value={selectedUserId}
+                        onChange={(event) => setSelectedUserId(event.target.value)}
+                        className="h-11 w-full rounded-xl border border-[#374151] bg-[#0f172a] px-3 text-sm text-slate-100 outline-none focus:border-[#f97316]"
+                      >
+                        {users.map((row) => (
+                          <option key={row.id} value={row.id}>{row.name || row.email} ({row.email})</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-300" htmlFor="user-role">Application role</label>
+                      <select
+                        id="user-role"
+                        value={selectedRole}
+                        onChange={(event) => setSelectedRole(event.target.value)}
+                        className="h-11 w-full rounded-xl border border-[#374151] bg-[#0f172a] px-3 text-sm text-slate-100 outline-none focus:border-[#f97316]"
+                      >
+                        {roleOptions.map((roleOption) => (
+                          <option key={roleOption} value={roleOption}>
+                            {({ writer: "Writer", reviewer: "Reviewer", approver: "Approver", admin: "Admin" })[roleOption]}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSaveRole}
+                      disabled={savingRole || !selectedUserId || users.length === 0}
+                      className="w-full rounded-xl border border-[#f97316]/60 bg-[#f97316]/10 px-4 py-3 text-sm font-semibold text-[#fdba74] transition hover:bg-[#f97316]/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {savingRole ? "Saving role..." : "Save Role"}
+                    </button>
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
                   className="mt-2 w-full rounded-xl bg-[#f97316] px-4 py-3 text-base font-semibold text-white shadow-[0_10px_18px_rgba(249,115,22,0.24)] transition hover:bg-[#ea580c] disabled:opacity-60"
                 >
-                  {saving ? "Saving..." : "Save Role"}
+                  {saving ? "Saving..." : "Save Profile"}
                 </button>
               </div>
             </section>

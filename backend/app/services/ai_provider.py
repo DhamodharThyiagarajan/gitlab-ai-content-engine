@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import json
 import re
 
@@ -10,142 +9,34 @@ from app.config import settings
 
 
 class AIProvider:
-
     async def generate(self, system: str, user: str) -> str:
-        # Mock mode
-        if settings.ai_provider == "mock" or not settings.openai_api_key:
+        if settings.ai_provider.lower() == "mock":
             return self.mock(system, user)
+        if settings.ai_provider.lower() != "openai_compatible":
+            raise RuntimeError(f"Unsupported AI_PROVIDER: {settings.ai_provider}")
+        if not settings.openai_api_key:
+            raise RuntimeError("OPENAI_API_KEY is required when AI_PROVIDER=openai_compatible")
 
-        model = settings.openai_model or "gemini-3.8-flash"
-
-        url = (
-            "https://generativelanguage.googleapis.com"
-            f"/v1beta/models/{model}:generateContent"
-        )
-
-        headers = {
-            "x-goog-api-key": settings.openai_api_key,
-            "Content-Type": "application/json",
-        }
-
+        url = f"{settings.openai_base_url.rstrip('/')}/chat/completions"
+        headers = {"Authorization": f"Bearer {settings.openai_api_key}"}
         payload = {
-            "systemInstruction": {
-                "parts": [
-                    {
-                        "text": system
-                    }
-                ]
-            },
-            "contents": [
-                {
-                    "role": "user",
-                    "parts": [
-                        {
-                            "text": user
-                        }
-                    ]
-                }
+            "model": settings.openai_model,
+            "temperature": 0.15,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
             ],
-            "generationConfig": {
-                "temperature": 0.15
-            }
         }
-
-        retry_delays = [0, 2, 5]
-
-        async with httpx.AsyncClient(
-            timeout=settings.ai_timeout_seconds
-        ) as client:
-
-            last_error = None
-
-            for delay in retry_delays:
-
-                if delay:
-                    await asyncio.sleep(delay)
-
-                try:
-                    response = await client.post(
-                        url,
-                        headers=headers,
-                        json=payload,
-                    )
-
-                    # Retry temporary Google server errors.
-                    if response.status_code in {
-                        500,
-                        502,
-                        503,
-                        504,
-                    }:
-                        last_error = response
-                        continue
-
-                    # Don't retry permanent errors such as 400/401/403/404.
-                    response.raise_for_status()
-
-                    data = response.json()
-
-                    candidates = data.get("candidates", [])
-
-                    if not candidates:
-                        raise RuntimeError(
-                            f"Gemini returned no candidates: {data}"
-                        )
-
-                    content = candidates[0].get(
-                        "content",
-                        {}
-                    )
-
-                    parts = content.get(
-                        "parts",
-                        []
-                    )
-
-                    texts = [
-                        part.get("text", "")
-                        for part in parts
-                        if isinstance(part, dict)
-                        and part.get("text")
-                    ]
-
-                    if not texts:
-                        raise RuntimeError(
-                            f"Gemini returned no text: {data}"
-                        )
-
-                    return "\n".join(texts).strip()
-
-                except httpx.HTTPError as exc:
-                    last_error = exc
-
-                    response_obj = getattr(
-                        exc,
-                        "response",
-                        None
-                    )
-
-                    if response_obj is not None:
-                        if response_obj.status_code not in {
-                            500,
-                            502,
-                            503,
-                            504,
-                        }:
-                            raise
-
-                    continue
-
-            if isinstance(last_error, httpx.Response):
-                last_error.raise_for_status()
-
-            if last_error:
-                raise last_error
-
-            raise RuntimeError(
-                "Gemini request failed after retries."
-            )
+        async with httpx.AsyncClient(timeout=settings.ai_timeout_seconds) as client:
+            response = await client.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+        choices = response.json().get("choices", [])
+        if not choices:
+            raise RuntimeError("AI provider returned no completion choices")
+        content = choices[0].get("message", {}).get("content")
+        if not isinstance(content, str) or not content.strip():
+            raise RuntimeError("AI provider returned an empty completion")
+        return content.strip()
 
     async def generate_json(
         self,
@@ -223,15 +114,34 @@ class AIProvider:
             else user[-3000:]
         )
 
+        cleaned = re.sub(r"\s+", " ", source)
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(r"(?<=[.!?])\s+", cleaned)
+            if sentence.strip()
+        ]
+        highlights = sentences[:4]
+        if not highlights:
+            highlights = [
+                "The source material contains the key product details required for a technical draft.",
+                "The content below summarizes the most relevant facts for the target audience.",
+            ]
+
+        summary_lines = "\n".join(f"- {item}" for item in highlights)
+
         return (
             f"# {title}\n\n"
-            "## Summary\n"
-            "Local mock mode is active. Configure "
-            "AI_PROVIDER and OPENAI_API_KEY for "
-            "model-based agents.\n\n"
-            "## Source-grounded material\n"
-            f"{source[:3000]}\n\n"
-            "## Review note\n"
-            "Human technical review is required "
-            "before publication."
+            "## Overview\n\n"
+            "This draft was generated from the uploaded source material in local mock mode. "
+            "It is structured for review and publication while staying grounded in the available document context.\n\n"
+            "## Executive summary\n\n"
+            f"{summary_lines}\n\n"
+            "## Key recommendations\n\n"
+            "- Confirm the facts against the original source before publishing.\n"
+            "- Tailor the final language to the intended audience and channel.\n"
+            "- Complete a final human review pass for tone and product accuracy.\n\n"
+            "## Supporting context\n\n"
+            f"{source[:2000]}\n\n"
+            "## Review note\n\n"
+            "Human technical review is required before publication."
         )

@@ -14,7 +14,7 @@ A full-stack, source-grounded content production platform based on the supplied 
 - Markdown export with approval gate
 - Operations metrics
 - React dashboard, intake, jobs, draft review and metrics views
-- Supabase PostgreSQL via `DATABASE_URL`; SQLite remains available for local development
+- SQLite for local startup or PostgreSQL/Supabase through `DATABASE_URL`
 - Docker Compose for local full-stack startup
 
 ## Quick start
@@ -37,19 +37,13 @@ npm install
 npm run dev
 ```
 
-Configure the Firebase Admin credentials and Supabase `DATABASE_URL` in `backend/.env`. Set the frontend's `NEXT_PUBLIC_BACKEND_URL` to the FastAPI URL. Open http://localhost:3000. For local JWT demo accounts, set `AUTH_PROVIDER=legacy` explicitly; Firebase is the default and new Firebase accounts receive the `writer` role.
+Configure `FIREBASE_PROJECT_ID` and Firebase Admin credentials in `backend/.env`. Set the matching `NEXT_PUBLIC_FIREBASE_*` web app values in `frontend/.env.local`. Firebase client and Admin settings must refer to the same Firebase project. The default local database is `sqlite:///./data/app.db`; replace it with a PostgreSQL connection URL when using Supabase. Set `NEXT_PUBLIC_BACKEND_URL=http://localhost:8000` in `frontend/.env.local`. Open http://localhost:3000. New Firebase accounts receive the `writer` role; an administrator must grant elevated roles.
 
-Legacy demo accounts (available only when `AUTH_PROVIDER=legacy`):
-- writer@example.com / password123
-- reviewer@example.com / password123
-- approver@example.com / password123
-- admin@example.com / password123
+To use Docker Compose, place the shared settings in the repository-root `.env` file and run `docker compose up --build`. The frontend is available at http://localhost:3000 and the API at http://localhost:8000. Firebase web settings are build arguments, so rebuild the frontend after changing them.
 
 For real AI, set `AI_PROVIDER=openai_compatible` and `OPENAI_API_KEY` in `.env`.
 
 ## API
-- POST /api/auth/register
-- POST /api/auth/login
 - GET /api/auth/me
 - POST /api/content-jobs
 - GET /api/content-jobs
@@ -60,6 +54,7 @@ For real AI, set `AI_PROVIDER=openai_compatible` and `OPENAI_API_KEY` in `.env`.
 - POST /api/publish/export
 - GET /api/metrics
 - GET /health
+- GET /health/ready
 
 ## Architecture
 See `docs/architecture.md`, `docs/workflow_states.md`, and `docs/demo_script.md`.
@@ -68,7 +63,7 @@ The supplied specification calls for source grounding, specialized agents, human
 
 ## Document ingestion and real agent workflow
 
-This implementation keeps the original repository structure and adds document ingestion inside the existing `backend/app/services`, `backend/app/api`, and `backend/app/orchestration` modules.
+Document ingestion and the AI workflow live in `backend/app/services`, `backend/app/api`, and `backend/ai`.
 
 ### Supported uploads
 
@@ -117,4 +112,4 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:3000`.

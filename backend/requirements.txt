@@ -12,3 +12,5 @@ pypdf==5.6.1
 python-docx==1.2.0
 firebase-admin>=6.8,<8
 psycopg[binary]>=3.2,<4
+crewai>=0.130,<1
+chromadb>=1.0,<2

@@ -8,10 +8,15 @@ import { useAuth } from "@/hooks/useAuth";
 const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
 
 function ReviewList({ title, items, empty }) {
-  const displayItem = (item) => typeof item === "string" ? item : [item.fact || item.claim || item.text || "", ...(item.source_refs || []).map((source) => `Source: ${source}`)].filter(Boolean).join(" · ");
+  const values = (Array.isArray(items) ? items : items ? [items] : []).map((item) => {
+    if (typeof item === "string") return item.trim();
+    if (!item || typeof item !== "object") return "";
+    const refs = Array.isArray(item.source_refs) ? item.source_refs : item.source_refs ? [item.source_refs] : [];
+    return [item.fact || item.claim || item.text || item.description || "", ...refs.filter(Boolean).map((source) => `Source: ${source}`)].filter(Boolean).join(" | ").trim();
+  }).filter(Boolean);
   return <section>
     {title && <h3 className="text-sm font-semibold text-slate-200">{title}</h3>}
-    {items.length ? <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-400">{items.map((item, index) => <li key={`${index}-${displayItem(item)}`} className="flex gap-2"><span className="text-orange-300">•</span><span>{displayItem(item)}</span></li>)}</ul> : <p className="mt-2 text-sm text-slate-500">{empty}</p>}
+    {values.length ? <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-400">{values.map((item, index) => <li key={`${index}-${item}`} className="flex gap-2"><span className="text-orange-300">-</span><span>{item}</span></li>)}</ul> : <p className="mt-2 text-sm text-slate-500">{empty}</p>}
   </section>;
 }
 

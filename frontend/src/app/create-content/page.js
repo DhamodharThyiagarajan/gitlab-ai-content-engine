@@ -33,6 +33,13 @@ const workflowSteps = [
   "Run AI workflow",
   "Review & publish",
 ];
+const completedStepsByStatus = {
+  intake: 1,
+  context_preparation: 3,
+  review: 4,
+  approved: 5,
+  published: 5,
+};
 
 export default function CreateContentPage() {
   const { user } = useAuth();
@@ -385,8 +392,7 @@ export default function CreateContentPage() {
 
               <div className="mt-5 space-y-3">
                 {workflowSteps.map((step, index) => {
-                  const isDone =
-                    index < (job ? workflowSteps.findIndex((s) => s.toLowerCase().includes((job.status || "").replace("_", " ")) || workflowSteps.length) : 0);
+                  const isDone = index < (completedStepsByStatus[job?.status] ?? 0);
 
                   return (
                     <div key={step} className="flex items-center gap-3 rounded-xl border border-[#2d3748] bg-[#111827] px-3 py-2">

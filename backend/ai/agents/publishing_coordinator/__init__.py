@@ -1,0 +1,1 @@
+"""Publishing coordinator role."""

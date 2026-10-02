@@ -25,7 +25,8 @@ async def refine(draft_id:int,body:RefineIn,db:Session=Depends(get_db),user=Depe
     job=db.get(ContentJob,draft.job_id)
     if user.role == "writer" and job.owner_id != user.id: raise HTTPException(403,"Writers can only refine their own drafts")
     from app.services.ai_provider import AIProvider
-    from app.orchestration.workflow import TechnicalReviewerAgent, clean_markdown, document_metadata, fact_text, fact_sources
+    from ai.agents.technical_reviewer.agent import TechnicalReviewerAgent
+    from ai.common import clean_markdown, document_metadata, fact_text, fact_sources, clean_review_items, clean_source_refs, normalize_review_payload
     instruction="Rewrite the document to address the reviewer feedback. Preserve all supported facts, do not add unsupported information, and return Markdown only."
     prompt=f"Reviewer feedback:\n{body.comments.strip() or 'Improve the document based on the requested revision.'}\n\nCurrent document:\n{draft.content}"
     ai=AIProvider()
@@ -35,13 +36,22 @@ async def refine(draft_id:int,body:RefineIn,db:Session=Depends(get_db),user=Depe
     except json.JSONDecodeError:
         context={}
     technical=(await TechnicalReviewerAgent(ai).run(job,content,context)).output
-    gaps=[str(value).strip() for value in context.get("gaps",[]) if str(value).strip()]
-    unsupported=[str(value).strip() for value in technical.get("unsupported_claims",[]) if str(value).strip()]
-    risks=[str(value).strip() for value in technical.get("risks",[]) if str(value).strip()]
+    gaps=clean_review_items(context.get("gaps",[]))
+    unsupported=clean_review_items(technical.get("unsupported_claims",[]))
+    risks=clean_review_items(technical.get("risks",[]))
     score=max(0,100-min(40,len(unsupported)*15)-min(25,len(risks)*10)-min(20,len(gaps)*3)-(10 if technical.get("verdict")!="PASS" else 0))
     job.quality_score=score
     metadata=document_metadata()
-    technical_review={**technical,"supported_information":[{"fact":fact_text(item),"source_refs":fact_sources(item)} for item in context.get("facts",[]) if fact_text(item)],"context_gaps":gaps,"source_refs":json.loads(draft.source_refs or "[]"),"quality_score":score,"generated_at":metadata["iso"],"evidence_count":len(context.get("facts",[])),"human_approval_required":True}
+    technical_review=normalize_review_payload({
+        **technical,
+        "supported_information": [{"fact": fact_text(item), "source_refs": clean_source_refs(fact_sources(item))} for item in context.get("facts", []) if fact_text(item)],
+        "context_gaps": gaps,
+        "source_refs": clean_source_refs(json.loads(draft.source_refs or "[]")),
+        "quality_score": score,
+        "generated_at": metadata["iso"],
+        "evidence_count": len(context.get("facts", [])),
+        "human_approval_required": True,
+    }, fallback_source_refs=json.loads(draft.source_refs or "[]"))
     risk_flags=unsupported+risks+[f"Context gap: {gap}" for gap in gaps]
     new=Draft(job_id=job.id,version=max(item.version for item in job.drafts)+1,content=content,stage="publishing_preparation",source_refs=draft.source_refs,risk_flags=json.dumps(risk_flags),reviewer_notes=json.dumps(technical_review,indent=2))
     job.status="review"; db.add(new); db.add(AuditEvent(job_id=job.id,actor_id=user.id,event_type="draft_refined",details=json.dumps({"from_version":draft.version,"feedback":body.comments}))); db.commit(); db.refresh(new)

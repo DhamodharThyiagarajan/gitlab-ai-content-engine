@@ -1,8 +1,8 @@
 # Architecture
 
-The Next.js frontend authenticates users with Firebase Authentication and sends Firebase ID tokens to FastAPI. FastAPI verifies tokens, enforces role permissions, and persists application data through SQLAlchemy. Set `DATABASE_URL` to a Supabase PostgreSQL connection string to use Supabase as the application database; SQLite remains available for local development.
+The Next.js frontend authenticates users with Firebase Authentication and sends Firebase ID tokens to FastAPI. FastAPI verifies tokens, enforces role permissions, and persists application data through SQLAlchemy. SQLite is the local default; set `DATABASE_URL` to a PostgreSQL connection string to use Supabase or another shared database.
 
-Firebase stores identities. The relational database stores application profiles, content jobs, context packs, drafts, reviews, audit events, and metrics data. New Firebase accounts receive the `writer` role. Client supplied roles are ignored; elevated roles must be granted through a trusted administrative process.
+Firebase stores identities. The relational database stores application profiles, content jobs, context packs, drafts, reviews, audit events, and metrics data. New Firebase accounts receive the `writer` role. Client supplied roles are ignored; elevated roles must be granted through the admin-only role management API.
 
 The governed workflow separates context preparation, drafting, technical review, tone refinement, publishing preparation, human review, and Markdown export.
 
@@ -21,6 +21,8 @@ The API enforces these permissions. Admins manage assignments through `GET /api/
 
 - Set `FIREBASE_PROJECT_ID` in the backend environment.
 - Provide Firebase Admin credentials through `FIREBASE_SERVICE_ACCOUNT_JSON` or Application Default Credentials.
-- Set `DATABASE_URL` to the Supabase PostgreSQL URI. Install backend requirements to include the PostgreSQL driver.
+- `DATABASE_URL` defaults to `sqlite:///./data/app.db`; use a PostgreSQL URI for Supabase or another shared database.
+- Configure the matching Firebase project ID and web app values in the backend and frontend environments.
 - Set `NEXT_PUBLIC_BACKEND_URL` to the FastAPI base URL in the frontend environment.
-- Set `CORS_ORIGINS` to the frontend origin(s).
+- Set `CORS_ORIGINS` to the frontend origin(s), usually `http://localhost:3000` for local Next.js.
+- `AI_PROVIDER=mock` runs locally without a model key. `AI_PROVIDER=openai_compatible` uses `OPENAI_BASE_URL`, `OPENAI_MODEL`, and `OPENAI_API_KEY`.

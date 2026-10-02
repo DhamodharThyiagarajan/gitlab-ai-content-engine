@@ -37,3 +37,12 @@ export async function updateUserProfile(_uid, profileData) {
   });
   return result.user;
 }
+
+export async function listUsers() {
+  return request("/api/auth/users");
+}
+
+export async function updateUserRole(userId, role) {
+  const result = await request(`/api/auth/users/${userId}/role`, "PUT", { role });
+  return result.user;
+}
