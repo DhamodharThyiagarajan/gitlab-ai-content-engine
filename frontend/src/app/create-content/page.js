@@ -18,8 +18,9 @@ import {
   FiZap,
 } from "react-icons/fi";
 import AppLayout from "@/components/layout/AppLayout";
+import { getBackendUrl } from "@/lib/backend";
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+const BACKEND_URL = getBackendUrl();
 
 const tabStyles = {
   active: "border-b-2 border-[#f97316] bg-[#111827] text-slate-100",

@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { useAuth } from "@/hooks/useAuth";
+import { getBackendUrl } from "@/lib/backend";
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+const BACKEND_URL = getBackendUrl();
 
 function ReviewList({ title, items, empty }) {
   const values = (Array.isArray(items) ? items : items ? [items] : []).map((item) => {

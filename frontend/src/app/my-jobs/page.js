@@ -5,8 +5,9 @@ import Link from "next/link";
 import AppLayout from "@/components/layout/AppLayout";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { useAuth } from "@/hooks/useAuth";
+import { getBackendUrl } from "@/lib/backend";
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+const BACKEND_URL = getBackendUrl();
 const filters = ["All", "In Progress", "Completed", "Failed"];
 
 const statusLabels = {

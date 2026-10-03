@@ -1,6 +1,7 @@
 import { auth } from "../../../firebase";
+import { getBackendUrl } from "@/lib/backend";
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+const BACKEND_URL = getBackendUrl();
 
 async function request(path, method = "GET", body) {
   const currentUser = auth.currentUser;

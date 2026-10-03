@@ -11,8 +11,9 @@ import {
 } from "react-icons/fi";
 import AppLayout from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
+import { getBackendUrl } from "@/lib/backend";
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000").replace(/\/$/, "");
+const BACKEND_URL = getBackendUrl();
 
 const statCards = [
   { label: "Total Jobs", key: "total_jobs", icon: FiFileText },
