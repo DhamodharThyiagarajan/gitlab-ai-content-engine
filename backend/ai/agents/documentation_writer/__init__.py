@@ -1,0 +1,1 @@
+"""Documentation writer role."""

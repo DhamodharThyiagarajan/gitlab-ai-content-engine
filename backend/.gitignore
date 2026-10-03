@@ -1,0 +1,36 @@
+# Python / Environment
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env.build
+
+# Secrets and Local Configurations
+.env
+.env.*
+!.env.example
+*.json
+!package*.json
+
+# Databases & Local Data
+*.db
+*.sqlite3
+/data/app.db
+/data/chroma/
+
+# IDEs & OS Files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

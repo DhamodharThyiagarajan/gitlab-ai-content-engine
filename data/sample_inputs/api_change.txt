@@ -1,0 +1,5 @@
+API change: Projects API
+Endpoint GET /api/v4/projects/:id/widgets now accepts an optional parameter `state` (string). Allowed values: active, archived.
+The response adds a field `last_activity_at` (ISO 8601 timestamp).
+Endpoint DELETE /api/v4/projects/:id/widgets/:widget_id is deprecated and will be removed in a future release. Use the archive action instead.
+Rate limit behaviour for this endpoint is not described in the merge request.

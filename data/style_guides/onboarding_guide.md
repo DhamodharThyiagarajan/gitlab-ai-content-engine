@@ -1,0 +1,2 @@
+- Friendly, step-by-step, assume the reader is new. Define terms on first use.
+- Mark steps that need human confirmation (access, permissions) clearly.

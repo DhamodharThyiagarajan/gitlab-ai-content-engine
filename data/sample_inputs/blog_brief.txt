@@ -1,0 +1,5 @@
+Product brief: Pipeline status badges
+Developers can now embed a pipeline status badge in any README using a new badge URL format.
+Badges update within one minute of a pipeline finishing.
+Goal of blog: show developers how to add a badge in three steps and explain why it helps teams see build health quickly.
+Open question: whether badges work for private projects has not been confirmed by engineering.

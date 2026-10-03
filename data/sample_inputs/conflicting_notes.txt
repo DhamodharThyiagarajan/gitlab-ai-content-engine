@@ -1,0 +1,3 @@
+Engineering note A: The export feature supports files up to 50 MB.
+Engineering note B (later): Export limit raised to 100 MB in the same release.
+Marketing draft: Export is unlimited.

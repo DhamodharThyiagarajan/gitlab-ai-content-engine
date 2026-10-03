@@ -1,0 +1,3 @@
+- Lead with what changed for the user, then why it matters.
+- One entry per change. Group by: New features, Improvements, Deprecations and breaking changes, Upgrade notes.
+- Keep each entry to 1-3 sentences. Link every entry to its source reference.

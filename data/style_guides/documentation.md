@@ -1,0 +1,3 @@
+- Task-oriented: start with what the reader can do, then prerequisites, then numbered steps.
+- Show a concrete example only if the source contains one. Never invent examples.
+- End with limitations and related topics.

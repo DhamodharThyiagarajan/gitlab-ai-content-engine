@@ -1,0 +1,4 @@
+Onboarding change: Runner registration
+New runners are now registered with an authentication token created in the project settings under CI/CD > Runners.
+The older registration token flow is deprecated.
+New team members must ask a project maintainer for permission to create runners.

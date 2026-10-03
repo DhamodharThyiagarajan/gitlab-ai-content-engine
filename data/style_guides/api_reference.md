@@ -1,0 +1,3 @@
+- Reference tone: neutral and precise. No narrative or marketing language.
+- For every endpoint list: method and path, purpose, parameters (name, type, required, description), response, errors.
+- Mark any parameter or field that the source does not fully describe as "Not specified in source".

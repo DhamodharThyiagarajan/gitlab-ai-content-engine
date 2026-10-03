@@ -1,0 +1,8 @@
+- Write in plain, direct, active voice. Prefer short sentences.
+- Address the reader as "you". Use "GitLab" (not "Gitlab" or "the platform").
+- Use exact product, feature and API names from the source. Never rename them.
+- Put API paths, commands, parameters and file names in `code formatting`.
+- Do not use marketing superlatives (revolutionary, seamless, best-in-class).
+- Never state a version, date, metric or compatibility claim that is not in the source.
+- If the source is silent, write: "The available source material does not specify this."
+- Call out breaking changes and deprecations in their own clearly labelled section.

@@ -1,0 +1,1 @@
+Platform update: the deployment workflow now supports a dry-run validation step before production execution. The validation step checks configuration syntax and reports detected issues without changing production resources. Teams should run validation before applying a production deployment.

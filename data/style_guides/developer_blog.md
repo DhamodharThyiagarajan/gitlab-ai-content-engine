@@ -1,0 +1,3 @@
+- Conversational but technically credible. Open with the developer problem, then the solution.
+- Keep claims modest and sourced. No unsupported benchmarks or customer claims.
+- Close with a clear next step (docs link, try-it steps).
