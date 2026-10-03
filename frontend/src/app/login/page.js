@@ -37,6 +37,8 @@ export default function LoginPage() {
   }, [authLoading, user, router]);
 
   async function completeSignIn(credential) {
+    const token = await credential.user.getIdToken();
+    console.log("Firebase ID Token:", token);
     await ensureUserProfile(credential.user);
     router.push("/dashboard");
   }

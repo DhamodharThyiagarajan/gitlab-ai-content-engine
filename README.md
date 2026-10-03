@@ -1,4 +1,4 @@
-# GitLab AI Content & Documentation Engine
+﻿# GitLab AI Content & Documentation Engine
 
 A full-stack, source-grounded content production platform based on the supplied GitLab AI Content & Documentation Engine specification and the existing repository structure.
 
