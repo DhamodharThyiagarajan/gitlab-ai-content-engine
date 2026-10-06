@@ -1091,6 +1091,20 @@ https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 
 ---
 
+---
+# Screenshots
+---
+## 1. Home 
+<img width="1920" height="911" alt="Screenshot (819)" src="https://github.com/user-attachments/assets/2342bc82-a17e-4168-8666-7706d575e942" />
+
+## 2. Application Dashboard
+<img width="1920" height="877" alt="Screenshot (820)" src="https://github.com/user-attachments/assets/581db509-9fe2-47b3-80b3-d0f2e7b56f30" />
+
+## 3. Generate Documentation
+<img width="1920" height="856" alt="Screenshot (823)" src="https://github.com/user-attachments/assets/f0bc7169-4835-4305-acc3-063d6eec7b81" />
+
+
+
 #  Project Summary
 
 **GitLab AI Content & Documentation Engine** is a full-stack AI-powered documentation platform that takes source material, extracts structured context, generates documentation through specialized AI stages, performs technical review, and places the result into a human-controlled approval and publishing workflow.
