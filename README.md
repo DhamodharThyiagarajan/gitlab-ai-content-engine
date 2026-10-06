@@ -8,21 +8,21 @@ The platform combines document ingestion, source/context normalization, a multi-
 
 ---
 
-## 🌐 Live Demo
+##  Live Demo
 
-### 💻 Frontend Application
+### Frontend Application
 
 https://gitlab-ai-content-engine-nu.vercel.app/login
 
-### 🚀 Backend API
+###  Backend API
 
 https://gitlab-ai-content-engine-api.onrender.com
 
-### 📚 FastAPI Swagger Documentation
+###  FastAPI Swagger Documentation
 
 https://gitlab-ai-content-engine-api.onrender.com/docs
 
-### 🔎 OpenAPI Specification
+### OpenAPI Specification
 
 https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 
@@ -36,7 +36,7 @@ https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 
 ---
 
-# 📌 Overview
+#  Overview
 
 The GitLab AI Content & Documentation Engine is designed to automate technical documentation generation while keeping humans in control of the final output.
 
@@ -89,9 +89,9 @@ Human Review
 
 ---
 
-# ✨ Key Features
+# Key Features
 
-## 🤖 AI-Assisted Documentation
+## AI-Assisted Documentation
 
 The system uses a multi-stage AI workflow instead of relying on a single prompt.
 
@@ -107,7 +107,7 @@ Each stage has a specific responsibility in the documentation pipeline.
 
 ---
 
-## 📚 Source-Grounded Generation
+##  Source-Grounded Generation
 
 The system processes source documents before generating content.
 
@@ -127,7 +127,7 @@ Scanned/image-only PDFs require OCR and are rejected when usable text cannot be 
 
 ---
 
-## 🧠 Context Reader
+##  Context Reader
 
 The Context Reader converts raw source material into structured evidence.
 
@@ -145,7 +145,7 @@ This structured context is then passed to the downstream AI stages.
 
 ---
 
-## ✍️ Documentation Writer
+## Documentation Writer
 
 The Documentation Writer creates customer-facing or engineering-facing documentation from the normalized source context.
 
@@ -168,7 +168,7 @@ Review findings are preserved as part of the draft/review process.
 
 ---
 
-## 🎨 Tone Optimizer
+##  Tone Optimizer
 
 The Tone Optimizer improves readability and consistency while keeping the technical meaning of the documentation intact.
 
@@ -184,7 +184,7 @@ Publishing is protected by the human approval process rather than allowing the A
 
 ---
 
-# 👥 Authentication & Role-Based Access Control
+#  Authentication & Role-Based Access Control
 
 The application uses Firebase Authentication with backend verification.
 
@@ -221,7 +221,7 @@ New Firebase users receive the default `writer` role. Elevated roles are managed
 
 ---
 
-# 🔄 Content Lifecycle
+#  Content Lifecycle
 
 A typical documentation job follows this lifecycle:
 
@@ -261,7 +261,7 @@ This provides traceability across documentation revisions.
 
 ---
 
-# 📄 Document Processing
+#  Document Processing
 
 The ingestion pipeline supports:
 
@@ -295,7 +295,7 @@ PDF source markers can preserve the original filename and page number.
 
 ---
 
-# 🏗️ System Architecture
+#  System Architecture
 
 ```text
 ┌───────────────────────────────┐
@@ -347,7 +347,7 @@ PDF source markers can preserve the original filename and page number.
 
 ---
 
-# 🤖 AI Workflow
+#  AI Workflow
 
 The implemented workflow is:
 
@@ -393,7 +393,7 @@ Prepares the final output while respecting the approval workflow.
 
 ---
 
-# 🧪 Mock AI Mode
+#  Mock AI Mode
 
 The project supports a mock AI mode for local development and demonstrations.
 
@@ -411,7 +411,7 @@ In mock mode:
 
 ---
 
-# 🧠 Real AI Configuration
+#  Real AI Configuration
 
 For real AI generation, configure the AI provider through environment variables.
 
@@ -431,7 +431,7 @@ For Gemini or another OpenAI-compatible provider, configure the corresponding pr
 
 ---
 
-# 🗄️ Database
+#  Database
 
 The project supports SQLite for local development.
 
@@ -460,7 +460,7 @@ The database stores application data such as:
 
 ---
 
-# 🔌 API
+#  API
 
 The FastAPI backend exposes the following major endpoints.
 
@@ -490,7 +490,7 @@ https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 
 ---
 
-# 📊 Metrics
+#  Metrics
 
 The application provides operational metrics through the backend API.
 
@@ -506,7 +506,7 @@ Frontend metrics are available through the dashboard.
 
 ---
 
-# 📝 Draft & Version History
+#  Draft & Version History
 
 Generated documentation is treated as a draft before final publication.
 
@@ -524,7 +524,7 @@ This prevents an AI-generated document from automatically becoming the final pub
 
 ---
 
-# 🔐 Human Review
+#  Human Review
 
 Human review is a core part of the workflow.
 
@@ -547,7 +547,7 @@ This provides an additional quality-control layer between AI generation and publ
 
 ---
 
-# 📁 Project Structure
+#  Project Structure
 
 ```text
 gitlab-ai-content-engine/
@@ -592,7 +592,7 @@ gitlab-ai-content-engine/
 
 ---
 
-# 🛠️ Technology Stack
+#  Technology Stack
 
 ## Frontend
 
@@ -641,7 +641,7 @@ gitlab-ai-content-engine/
 
 ---
 
-# 🚀 Local Setup
+# Local Setup
 
 ## 1. Clone the repository
 
@@ -798,7 +798,7 @@ http://localhost:3000
 
 ---
 
-# 🐳 Docker Setup
+#  Docker Setup
 
 The repository also contains Docker Compose configuration.
 
@@ -812,7 +812,7 @@ The application will start using the configured environment variables.
 
 ---
 
-# 🔥 Firebase Configuration
+#  Firebase Configuration
 
 The frontend and backend must use the same Firebase project.
 
@@ -843,7 +843,7 @@ Do not commit private credentials or service-account files.
 
 ---
 
-# ☁️ Deployment
+#  Deployment
 
 ## Frontend
 
@@ -883,7 +883,7 @@ The backend must be configured with the appropriate production environment varia
 
 ---
 
-# 🌍 Production Architecture
+#  Production Architecture
 
 ```text
                     Internet
@@ -911,7 +911,7 @@ The backend must be configured with the appropriate production environment varia
 
 ---
 
-# 🔒 Security Considerations
+#  Security Considerations
 
 The project follows several security principles:
 
@@ -927,7 +927,7 @@ The project follows several security principles:
 
 ---
 
-# 🧪 Testing & Demo
+#  Testing & Demo
 
 For a local demo without an AI API key:
 
@@ -973,7 +973,7 @@ Export Approved Documentation
 
 ---
 
-# 📚 Documentation
+#  Documentation
 
 Additional project documentation is available in:
 
@@ -991,7 +991,7 @@ docs/demo_script.md
 
 ---
 
-# 🎯 Project Goals
+#  Project Goals
 
 The project is designed to demonstrate how an AI-assisted documentation platform can combine:
 
@@ -1011,7 +1011,7 @@ The project is designed to demonstrate how an AI-assisted documentation platform
 
 ---
 
-# 🔮 Future Enhancements
+#  Future Enhancements
 
 Potential future improvements include:
 
@@ -1030,7 +1030,7 @@ Potential future improvements include:
 
 ---
 
-# 👨‍💻 Development
+#  Development
 
 The project separates responsibilities between the frontend, backend, document processing, AI workflow, and deployment configuration.
 
@@ -1050,7 +1050,7 @@ Deployment
 
 ---
 
-# 📌 Important Notes
+#  Important Notes
 
 - Do not commit `.env` files containing real credentials.
 - Do not expose Firebase Admin private keys.
@@ -1061,13 +1061,13 @@ Deployment
 
 ---
 
-# 📜 License
+#  License
 
 This project is intended for development, demonstration, and educational purposes unless a separate license is provided.
 
 ---
 
-# 🌐 Links
+#  Links
 
 **GitHub Repository**
 
@@ -1091,7 +1091,21 @@ https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 
 ---
 
-# ⭐ Project Summary
+---
+# Screenshots
+---
+## 1. Home 
+<img width="1920" height="911" alt="Screenshot (819)" src="https://github.com/user-attachments/assets/2342bc82-a17e-4168-8666-7706d575e942" />
+
+## 2. Application Dashboard
+<img width="1920" height="877" alt="Screenshot (820)" src="https://github.com/user-attachments/assets/581db509-9fe2-47b3-80b3-d0f2e7b56f30" />
+
+## 3. Generate Documentation
+<img width="1920" height="856" alt="Screenshot (823)" src="https://github.com/user-attachments/assets/f0bc7169-4835-4305-acc3-063d6eec7b81" />
+
+
+
+#  Project Summary
 
 **GitLab AI Content & Documentation Engine** is a full-stack AI-powered documentation platform that takes source material, extracts structured context, generates documentation through specialized AI stages, performs technical review, and places the result into a human-controlled approval and publishing workflow.
 
