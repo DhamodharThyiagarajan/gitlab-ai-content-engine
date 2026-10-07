@@ -153,7 +153,7 @@ The writer is designed to work from extracted evidence rather than blindly gener
 
 ---
 
-## 🔍 Technical Reviewer
+## Technical Reviewer
 
 The Technical Reviewer checks the generated documentation for issues such as:
 
@@ -176,7 +176,7 @@ It can be used to produce documentation suitable for different audiences and com
 
 ---
 
-## 📦 Publishing Coordinator
+##  Publishing Coordinator
 
 The Publishing Coordinator prepares the final documentation for controlled output.
 
@@ -1098,10 +1098,22 @@ https://gitlab-ai-content-engine-api.onrender.com/openapi.json
 <img width="1920" height="911" alt="Screenshot (819)" src="https://github.com/user-attachments/assets/2342bc82-a17e-4168-8666-7706d575e942" />
 
 ## 2. Application Dashboard
-<img width="1920" height="877" alt="Screenshot (820)" src="https://github.com/user-attachments/assets/581db509-9fe2-47b3-80b3-d0f2e7b56f30" />
+<img width="1600" height="950" alt="dashboard" src="https://github.com/user-attachments/assets/1494487d-aff6-49c6-b957-585d017fdcf0" />
 
-## 3. Generate Documentation
-<img width="1920" height="856" alt="Screenshot (823)" src="https://github.com/user-attachments/assets/f0bc7169-4835-4305-acc3-063d6eec7b81" />
+## Create content page
+<img width="1600" height="950" alt="create_content_page" src="https://github.com/user-attachments/assets/8810612c-da58-4680-b780-ef51f8cfb84c" />
+
+## 3. Review page
+<img width="1600" height="950" alt="review_page" src="https://github.com/user-attachments/assets/c160aa85-2ea6-4731-88ba-05cfe1eb2ecc" />
+
+## Job Page
+<img width="1600" height="950" alt="jobs_page" src="https://github.com/user-attachments/assets/82cf30e3-2c9f-4e17-b8f0-b30500d470ac" />
+
+## Analytics Page
+<img width="1600" height="950" alt="analytics_page" src="https://github.com/user-attachments/assets/7c52573b-0c03-43e1-a727-699a666cfd66" />
+
+## Role Management Page
+<img width="1600" height="950" alt="role_management_page" src="https://github.com/user-attachments/assets/1b2b9e60-be47-43f8-8794-bef75fb8dd41" />
 
 
 
