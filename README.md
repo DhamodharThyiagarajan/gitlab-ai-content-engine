@@ -44,48 +44,10 @@ Instead of directly sending raw project information to an AI model, the system p
 
 ### High-Level Flow
 
-```text
-User
-  ↓
-React Frontend
-  ↓
-FastAPI Backend
-  ↓
-Authentication / RBAC
-  ↓
-Content Job
-  ↓
-Document Processing
-  ↓
-Source / Context Normalization
-  ↓
-AI Workflow
-  ↓
-Context Reader
-  ↓
-Documentation Writer
-  ↓
-Technical Reviewer
-  ↓
-Tone Optimizer
-  ↓
-Publishing Coordinator
-  ↓
-Draft
-  ↓
-Human Review
-  ├── Approve
-  │     ↓
-  │   Export / Publish
-  │
-  └── Request Revision
-        ↓
-      Refine
-        ↓
-   New Draft Version
-        ↓
-      Review Again
-```
+
+<img width="1000" height="699" alt="ai_workflow_flowchart_small" src="https://github.com/user-attachments/assets/43ce7bb8-f7f4-4eae-8b82-68f13f8cad92" />
+
+
 
 ---
 
@@ -263,22 +225,8 @@ This provides traceability across documentation revisions.
 
 #  Document Processing
 
-The ingestion pipeline supports:
+<img width="1000" height="524" alt="Document Processing Pipeline" src="https://github.com/user-attachments/assets/3491c526-708c-463e-af16-5c48dfb6cc44" />
 
-```text
-Uploaded File
-     ↓
-File Validation
-     ↓
-Document Extraction
-     ↓
-Text Normalization
-     ↓
-Source Metadata
-     ↓
-Context Reader
-     ↓
-AI Workflow
 ```
 
 ### Supported formats
@@ -349,26 +297,8 @@ PDF source markers can preserve the original filename and page number.
 
 #  AI Workflow
 
-The implemented workflow is:
+<img width="1000" height="700" alt="AI Workflow_ From Upload to Export" src="https://github.com/user-attachments/assets/bcfa810e-630f-4123-ab2a-1d2aea9420a8" />
 
-```text
-Upload
-  ↓
-Document Extraction
-  ↓
-Context Reader
-  ↓
-Documentation Writer
-  ↓
-Technical Reviewer
-  ↓
-Tone Optimizer
-  ↓
-Publishing Coordinator
-  ↓
-Human Review
-  ↓
-Export
 ```
 
 ### Context Reader
