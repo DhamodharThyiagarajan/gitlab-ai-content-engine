@@ -45,7 +45,8 @@ Instead of directly sending raw project information to an AI model, the system p
 ### High-Level Flow
 
 
-<img width="1000" height="699" alt="ai_workflow_flowchart_small" src="https://github.com/user-attachments/assets/43ce7bb8-f7f4-4eae-8b82-68f13f8cad92" />
+<img width="1312" height="1199" alt="AI Documentation Workflow Loop" src="https://github.com/user-attachments/assets/a6d79d8b-e2ad-40c2-baf6-c1d785a1d808" />
+
 
 
 
@@ -181,47 +182,7 @@ Supported roles include:
 
 New Firebase users receive the default `writer` role. Elevated roles are managed by administrators.
 
----
 
-#  Content Lifecycle
-
-A typical documentation job follows this lifecycle:
-
-```text
-Draft
-  ↓
-Review
-  ↓
-Approved
-  ↓
-Publishing
-  ↓
-Published
-```
-
-If revision is requested:
-
-```text
-Draft
-  ↓
-Review
-  ↓
-Revision Requested
-  ↓
-Refine
-  ↓
-New Draft Version
-  ↓
-Review Again
-  ↓
-Approved
-  ↓
-Published / Exported
-```
-
-This provides traceability across documentation revisions.
-
----
 
 #  Document Processing
 
