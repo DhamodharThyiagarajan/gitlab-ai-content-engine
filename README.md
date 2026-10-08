@@ -1038,3 +1038,19 @@ Export / Publish
 **Database:** SQLite / PostgreSQL / Supabase  
 **AI:** Configurable provider  
 **Workflow:** Source-grounded multi-stage generation + human review
+
+## Contributors 
+
+This project was developed collaboratively by:
+
+| Contributor | Role / Contribution |
+|---|---|
+| Jayati Nilekar | AI & Retrieval — CrewAI, ChromaDB, Pydantic |
+| Harsh Singh | Backend & API — FastAPI, Job Intake |
+| Dhamodhar Thiyagarajan | Frontend — Next.js, React.js, Tailwind CSS; Backend — Firebase Auth, Auth Endpoints, Supabase DB & Backend Integration |
+| Harsh Raj | Deployment & Database — Docker Compose, SQLite/PostgreSQL |
+| Vidya Lamkhade | QA & Testing — Pipeline Validation, Mock AI, API Testing |
+| Anjali Kashyap | Documentation — Workflow Documentation |
+| Rishi Darshan | Architecture — System Architecture |
+
+All contributors participated collaboratively in the development, testing, documentation, and refinement of the project.
