@@ -2,7 +2,7 @@
 
 The demonstration is divided into seven parts according to the project components and their respective presenters.
 
-## Part 1: AI Workflow (0–5 minutes)
+## AI Workflow (0–5 minutes)
 
 **Focus:** Multi-stage AI workflow.
 
@@ -12,7 +12,7 @@ The demonstration is divided into seven parts according to the project component
 - Cover the Tone Optimizer and Publishing Coordinator.
 - Show the human review, approval, and revision flow.
 
-## Part 2: Backend (6–9 minutes)
+## Backend (6–9 minutes)
 
 **Focus:** Backend implementation and API integration.
 
@@ -21,7 +21,7 @@ The demonstration is divided into seven parts according to the project component
 - Explain the review, refinement, and export endpoints.
 - Show how the backend processes requests and coordinates application operations.
 
-## Part 3: Frontend ( 9-12)
+## Frontend ( 9-12 minutes)
 
 **Focus:** User interface and application flow.
 
@@ -30,9 +30,8 @@ The demonstration is divided into seven parts according to the project component
 - Demonstrate how generated drafts and review options are displayed.
 - Explain how users interact with the application.
 
-**Timestamp:** To be added after reviewing the demo video.
 
-## Part 4: Database (12-15)
+## Database (12-15 minutes)
 
 **Focus:** Data storage and management.
 
@@ -40,9 +39,8 @@ The demonstration is divided into seven parts according to the project component
 - Describe how content jobs, drafts, and workflow information are stored.
 - Explain how the backend interacts with the database.
 
-**Timestamp:** To be added after reviewing the demo video.
 
-## Part 5: Testing (15-20)
+## Testing (15-20 minutes)
 
 **Focus:** Application and API testing.
 
@@ -51,9 +49,8 @@ The demonstration is divided into seven parts according to the project component
 - Explain mock AI mode and how it supports testing and demonstrations.
 - Show how the team validates the application's behavior.
 
-**Timestamp:** To be added after reviewing the demo video.
 
-## Part 6: Workflow Documentation (20-21)
+## Workflow Documentation (20-21 minutes)
 
 **Focus:** Documenting the workflow and its stages.
 
@@ -62,9 +59,8 @@ The demonstration is divided into seven parts according to the project component
 - Explain the human review, approval, revision, and export process.
 - Show how the documentation helps the team understand and explain the workflow.
 
-**Timestamp:** To be added after reviewing the demo video.
 
-## Part 7: Conclusion and Future Enhancements (21-23)
+## Conclusion and Future Enhancements (21-32 minutes)
 
 **Focus:** Project summary and future improvements.
 
@@ -73,7 +69,6 @@ The demonstration is divided into seven parts according to the project component
 - Highlight the importance of source-grounded documentation and human review.
 - Discuss possible future enhancements, such as CMS publishing integration, improved workflow monitoring, and prompt version management.
 
- ***The live demo is been given like that***
 
 
 
