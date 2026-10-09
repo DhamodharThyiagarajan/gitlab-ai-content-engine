@@ -180,7 +180,7 @@ Supported roles include:
 |---|---:|---:|---:|---:|
 | Writer | ✅ | ❌ | ❌ | ❌ |
 | Reviewer | ✅ | ✅ | ❌ | ❌ |
-| Approver | ❌ | ✅ | ✅ | ❌ |
+| Approver | ✅ | ✅ | ✅ | ❌ |
 | Admin | ✅ | ✅ | ✅ | ✅ |
 
 New Firebase users receive the default `writer` role. Elevated roles are managed by administrators.
@@ -518,11 +518,10 @@ gitlab-ai-content-engine/
 
 ## AI
 
-- Multi-stage AI workflow
-- Source/context grounding
-- Structured outputs
-- Technical review
-- Tone optimization
+- Crew AI
+- Pydantic
+- Chroma DB 
+- Gemini as primary LLM
 - Mock AI mode
 - OpenAI-compatible provider configuration
 
@@ -1048,12 +1047,12 @@ This project was developed collaboratively by:
 
 | Contributor | Role / Contribution |
 |---|---|
-| Jayati Nilekar | AI & Retrieval — CrewAI, ChromaDB, Pydantic |
-| Harsh Singh | Backend & API — FastAPI, Job Intake,  Markdown formatting and Model upgradation |
-| Dhamodhar Thiyagarajan | Frontend — Next.js, React.js, Tailwind CSS; Backend — Firebase Auth, Auth Endpoints, Supabase DB & Backend Integration |
-| Harsh Raj | Deployment & Database — Docker Compose, SQLite/PostgreSQL |
+| Jayati Nilekar | AI & Retrieval |
+| Harsh Singh | Backend & API, Job Intake,  Markdown formatting and Model upgradation |
+| Dhamodhar Thiyagarajan | Frontend & Backend — Firebase Auth, Auth Endpoints, Supabase DB & Backend Integration |
+| Harsh Raj | Deployment & Database  |
 | Vidya Lamkhade | QA & Testing — Pipeline Validation, Mock AI, API Testing |
 | Anjali Kashyap | Documentation — Workflow Documentation |
-| Rishi Darshan | Architecture — System Architecture |
+| Rishi Darshan | Planning & Project Development |
 
 All contributors participated collaboratively in the development, testing, documentation, and refinement of the project.
