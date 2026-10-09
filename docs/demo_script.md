@@ -1,74 +1,87 @@
-# Demo Script — GitLab AI Content & Documentation Engine
+# Demo Script — GitLab AI Content Engine
 
-The demonstration is divided into seven parts according to the project components and their respective presenters.
+The demonstration is divided into seven parts, covering the main project components, AI workflow, testing, and documentation.
 
 ## AI Workflow (0–5 minutes)
 
-**Focus:** Multi-stage AI workflow.
+**Focus:** Multi-stage AI content-generation workflow.
 
-- Explain document ingestion and context extraction.
-- Demonstrate the Context Reader.
-- Explain the Documentation Writer and Technical Reviewer.
-- Cover the Tone Optimizer and Publishing Coordinator.
-- Show the human review, approval, and revision flow.
+* Introduce the purpose of the AI workflow.
+* Explain how the workflow receives task inputs and uses the configured language model.
+* Demonstrate the Context Reader and explain its role in extracting source-grounded information.
+* Explain the Documentation Writer and Technical Reviewer.
+* Describe the Tone Optimizer and Publishing Coordinator.
+* Show how the five specialized agents work sequentially to prepare the final content.
 
-## Backend (6–9 minutes)
+## Backend and API (5–9 minutes)
 
 **Focus:** Backend implementation and API integration.
 
-- Explain the FastAPI backend architecture.
-- Demonstrate the content-job and workflow APIs.
-- Explain the review, refinement, and export endpoints.
-- Show how the backend processes requests and coordinates application operations.
+* Explain the role of the backend in the application.
+* Show the relevant API implementation in `backend/app/api/reviews.py`.
+* Explain how the application handles review-related operations, based on the actual implementation.
+* Demonstrate a real API request and response, if available.
+* Explain how the API layer interacts with the AI workflow.
 
-## Frontend ( 9-12 minutes)
+## AI Agent Architecture (9–13 minutes)
 
-**Focus:** User interface and application flow.
+**Focus:** Agent responsibilities and task coordination.
 
-- Demonstrate the login page and authentication flow.
-- Show how a user creates and manages a content-generation job.
-- Demonstrate how generated drafts and review options are displayed.
-- Explain how users interact with the application.
+* Open `backend/ai/agents/crew.py`.
+* Explain the `build_crew` function.
+* Introduce the five agents: Context Reader, Documentation Writer, Technical Reviewer, Tone Optimizer, and Publishing Coordinator.
+* Explain how each agent has a specific role and goal.
+* Demonstrate how tasks are organized using `Process.sequential`.
+* Explain how context from previous tasks can be passed to subsequent tasks.
 
+## Application Workflow and Output (13–16 minutes)
 
-## Database (12-15 minutes)
+**Focus:** Processing task inputs and generating content.
 
-**Focus:** Data storage and management.
+* Show how the application invokes the AI workflow in `backend/ai/workflow.py`.
+* Explain how task inputs are passed into the workflow.
+* Demonstrate the actual workflow using a prepared sample input.
+* Show the generated output and explain its structure.
+* Explain how the final stage prepares the content for output.
 
-- Explain the database used by the application.
-- Describe how content jobs, drafts, and workflow information are stored.
-- Explain how the backend interacts with the database.
+## Testing and API Testing (16–21 minutes)
 
+**Focus:** Validating application behavior and API functionality.
 
-## Testing (15-20 minutes)
+* Explain the purpose of automated testing.
+* Show `tests/ai_output_tests/test_ai_workflow.py`.
+* Demonstrate relevant test cases and expected-agent or output checks.
+* Show the actual test results confirming that 25 out of 25 tests passed.
+* Demonstrate API testing using the project's actual API testing file or tool.
+* Explain how the team checks responses and validates expected behavior.
 
-**Focus:** Application and API testing.
+## Architecture and Workflow Documentation (21–24 minutes)
 
-- Explain how the API endpoints are tested.
-- Demonstrate relevant workflow or validation tests.
-- Explain mock AI mode and how it supports testing and demonstrations.
-- Show how the team validates the application's behavior.
+**Focus:** Explaining and documenting the project design.
 
+* Open `docs/architecture.md`.
+* Explain the architecture diagram and the main project components.
+* Describe the sequential AI workflow and the responsibilities of the five agents.
+* Explain how technical documentation helps developers understand and maintain the project.
+* Show the `docs/demo_script.md` file and explain how it supports the project demonstration.
 
-## Workflow Documentation (20-21 minutes)
+## Conclusion and Future Enhancements (24–27 minutes)
 
-**Focus:** Documenting the workflow and its stages.
+**Focus:** Project summary and possible improvements.
 
-- Explain the purpose of the workflow documentation.
-- Describe the stages from context reading and draft generation to technical review and tone optimization.
-- Explain the human review, approval, revision, and export process.
-- Show how the documentation helps the team understand and explain the workflow.
+* Summarize the purpose of the GitLab AI Content Engine.
+* Highlight the benefits of using five specialized AI agents.
+* Explain the importance of source-grounded content, review, and testing.
+* Summarize the testing results.
+* Discuss possible future enhancements, such as improved workflow monitoring, prompt version management, stronger validation, and additional integrations where appropriate.
+* Thank the audience and invite feedback.
 
+---
 
-## Conclusion and Future Enhancements (21-32 minutes)
+## Presenter Notes
 
-**Focus:** Project summary and future improvements.
-
-- Summarize the project's purpose and key capabilities.
-- Explain how the different components work together.
-- Highlight the importance of source-grounded documentation and human review.
-- Discuss possible future enhancements, such as CMS publishing integration, improved workflow monitoring, and prompt version management.
-
-
-
-
+* Demonstrate only features that are implemented in the current project.
+* Use the actual sample input, commands, and API requests from the repository.
+* Show the real test output when reporting the 25/25 result.
+* Do not expose API keys, `.env` values, or other sensitive information.
+* Adjust the timing according to the number of presenters and the actual demonstration.
