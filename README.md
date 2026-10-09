@@ -191,9 +191,11 @@ New Firebase users receive the default `writer` role. Elevated roles are managed
 
 <img width="1000" height="524" alt="Document Processing Pipeline" src="https://github.com/user-attachments/assets/3491c526-708c-463e-af16-5c48dfb6cc44" />
 
-```
 
-### Supported formats
+
+---
+
+#  Supported Documents
 
 | Format | Supported |
 |---|---|
@@ -263,27 +265,6 @@ PDF source markers can preserve the original filename and page number.
 
 <img width="1000" height="700" alt="AI Workflow_ From Upload to Export" src="https://github.com/user-attachments/assets/bcfa810e-630f-4123-ab2a-1d2aea9420a8" />
 
-```
-
-### Context Reader
-
-Responsible for extracting structured evidence from source documents.
-
-### Documentation Writer
-
-Transforms the evidence into documentation.
-
-### Technical Reviewer
-
-Checks the generated content for technical problems and unsupported information.
-
-### Tone Optimizer
-
-Improves the style and readability.
-
-### Publishing Coordinator
-
-Prepares the final output while respecting the approval workflow.
 
 ---
 
