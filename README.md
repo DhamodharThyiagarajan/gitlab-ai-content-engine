@@ -8,7 +8,8 @@ The platform combines document ingestion, source/context normalization, a multi-
 
 ---
 
-##  Live Demo
+##  Live Demo link 
+https://drive.google.com/file/d/1XYmRmn3JyJ0EQFBXAa5SEr6Xh2zjhPNB/view?usp=sharing
 
 ### Frontend Application
 
