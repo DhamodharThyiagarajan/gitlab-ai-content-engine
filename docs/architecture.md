@@ -14,7 +14,7 @@ The application uses specialized AI agents to analyze context, write documentati
 * **Google Gemini:** Configured language model
 * **CrewAI:** AI agent and task orchestration
 * **ChromaDB:** Vector storage and retrieval, where configured
-* **PyPDF:** PDF text extraction, where implemented
+* **Pydox and Pytext:** text extraction, where implemented
 * **API Layer:** Communication between clients and application functionality
 * **Swagger / OpenAPI:** API documentation and interactive testing, when configured
 * **Pytest:** Automated testing
