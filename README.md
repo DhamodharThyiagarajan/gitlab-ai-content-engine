@@ -1,6 +1,8 @@
 # GitLab AI Content & Documentation Engine
 
-> **AI-assisted, source-grounded documentation generation with human review and controlled publishing.**
+> **AI-assisted, source-grounded documentation generation with human review and controlled publishing.**<br>
+🚀 [View Live Application](https://gitlab-ai-content-engine-nu.vercel.app/login)
+
 
 A full-stack AI documentation platform that transforms release notes, technical documents, API specifications, engineering updates, and uploaded files into structured, review-ready documentation.
 
