@@ -960,30 +960,6 @@ This project is intended for development, demonstration, and educational purpose
 
 ---
 
-#  Links
-
-**GitHub Repository**
-
-https://github.com/DhamodharThyiagarajan/gitlab-ai-content-engine/
-
-**Live Frontend**
-
-https://gitlab-ai-content-engine-nu.vercel.app/login
-
-**Production Backend**
-
-https://gitlab-ai-content-engine-api.onrender.com
-
-**FastAPI Swagger**
-
-https://gitlab-ai-content-engine-api.onrender.com/docs
-
-**OpenAPI Specification**
-
-https://gitlab-ai-content-engine-api.onrender.com/openapi.json
-
----
-
 ---
 # Screenshots
 ---
