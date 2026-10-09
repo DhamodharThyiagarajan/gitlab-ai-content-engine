@@ -1046,7 +1046,7 @@ This project was developed collaboratively by:
 | Contributor | Role / Contribution |
 |---|---|
 | Jayati Nilekar | AI & Retrieval — CrewAI, ChromaDB, Pydantic |
-| Harsh Singh | Backend & API — FastAPI, Job Intake |
+| Harsh Singh | Backend & API — FastAPI, Job Intake,  Markdown formatting and Model upgradation |
 | Dhamodhar Thiyagarajan | Frontend — Next.js, React.js, Tailwind CSS; Backend — Firebase Auth, Auth Endpoints, Supabase DB & Backend Integration |
 | Harsh Raj | Deployment & Database — Docker Compose, SQLite/PostgreSQL |
 | Vidya Lamkhade | QA & Testing — Pipeline Validation, Mock AI, API Testing |
